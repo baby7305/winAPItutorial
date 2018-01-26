@@ -5,22 +5,15 @@
 #include <windows.h>
 #include <wchar.h>
 
-int wmain(int argc, wchar_t **argv) {
+#pragma comment(lib, "user32.lib")
 
-	PDWORD cChars = NULL;
-	HANDLE std = GetStdHandle(STD_OUTPUT_HANDLE);
+int wmain(void) {
 
-	if (std == INVALID_HANDLE_VALUE) {
-		wprintf(L"Cannot retrieve standard output handle\n (%d)",
-			GetLastError());
-	}
+	int x = GetSystemMetrics(SM_CXSCREEN);
+	int y = GetSystemMetrics(SM_CYSCREEN);
 
-	if (argv[1]) {
-
-		WriteConsoleW(std, argv[1], wcslen(argv[1]), cChars, NULL);
-	}	
-
-	CloseHandle(std);
+	wprintf(L"The screen size is: %dx%d\n", x, y);
+	getchar();
 	return 0;
 }
 
