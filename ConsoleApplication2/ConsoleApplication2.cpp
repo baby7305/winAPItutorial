@@ -6,6 +6,8 @@
 
 int main()
 {
-    return 0;
+	puts("This is a classic C program.");
+	getchar();
+	return 0;
 }
 
