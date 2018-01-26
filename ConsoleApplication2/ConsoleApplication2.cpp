@@ -3,24 +3,28 @@
 
 #include "stdafx.h"
 #include <windows.h>
-#include <wchar.h>
+#include <tchar.h>
 
-int wmain(int argc, wchar_t **argv) {
+#define _UNICODE
+#define UNICODE
+
+int _tmain(int argc, TCHAR *argv[]) {
 
 	PDWORD cChars = NULL;
 	HANDLE std = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	if (std == INVALID_HANDLE_VALUE) {
-		wprintf(L"Cannot retrieve standard output handle\n (%d)",
+		_tprintf(L"Cannot retrieve standard output handle\n (%d)",
 			GetLastError());
 	}
 
 	if (argv[1]) {
 
-		WriteConsoleW(std, argv[1], wcslen(argv[1]), cChars, NULL);
-	}	
+		WriteConsole(std, argv[1], _tcslen(argv[1]), cChars, NULL);
+	}
 
 	CloseHandle(std);
+
 	return 0;
 }
 
