@@ -9,11 +9,14 @@
 
 int wmain(void) {
 
-	int x = GetSystemMetrics(SM_CXSCREEN);
-	int y = GetSystemMetrics(SM_CYSCREEN);
+	int r = LockWorkStation();
 
-	wprintf(L"The screen size is: %dx%d\n", x, y);
-	getchar();
+	if (r == 0) {
+
+		wprintf(L"LockWorkStation() failed %d\n", GetLastError());
+		return 1;
+	}
+
 	return 0;
 }
 
