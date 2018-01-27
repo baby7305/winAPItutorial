@@ -5,8 +5,6 @@
 #include <windows.h>
 #include <wchar.h>
 
-#pragma comment(lib, "user32.lib")
-
 int wmain(void) {
 
 	wchar_t computerName[MAX_COMPUTERNAME_LENGTH + 1];
