@@ -5,35 +5,52 @@
 #include <windows.h>
 #include <wchar.h>
 
-#define WINDOWS_TICKS_PER_SEC 10000000
-#define EPOCH_DIFFERENCE 11644473600LL
-
-long long WindowsTicksToUnixSeconds(long long);
-
 int wmain(void) {
 
-	FILETIME ft = { 0 };
+	FILETIME ft1 = { 0 };
+	FILETIME ft2 = { 0 };
+	SYSTEMTIME st = { 0 };
+	LARGE_INTEGER li1 = { 0 };
+	LARGE_INTEGER li2 = { 0 };
 
-	GetSystemTimeAsFileTime(&ft);
+	st.wYear = 2018;
+	st.wMonth = 12;
+	st.wDay = 25;
 
-	LARGE_INTEGER li = { 0 };
+	int r = SystemTimeToFileTime(&st, &ft1);
 
-	li.LowPart = ft.dwLowDateTime;
-	li.HighPart = ft.dwHighDateTime;
+	if (r == 0) {
 
-	long long int hns = li.QuadPart;
+		wprintf(L"Failed to convert system time to file time\n (%d)",
+			GetLastError());
+		return 1;
+	}
 
-	wprintf(L"Windows API time: %lli\n", hns);
+	GetSystemTimeAsFileTime(&ft2);
 
-	long long int utm = WindowsTicksToUnixSeconds(hns);
+	li1.LowPart = ft1.dwLowDateTime;
+	li1.HighPart = ft1.dwHighDateTime;
 
-	wprintf(L"Unix time: %lli\n", utm);
+	li2.LowPart = ft2.dwLowDateTime;
+	li2.HighPart = ft2.dwHighDateTime;
+
+	long long int dif = li1.QuadPart - li2.QuadPart;
+
+	int days2xmas = dif / 10000000L / 60 / 60 / 24;
+
+	if (days2xmas == 1) {
+
+		wprintf(L"There is one day until Christmas\n", days2xmas);
+	}
+	else if (days2xmas == 0) {
+
+		wprintf(L"Today is Chritmas\n");
+	}
+	else {
+
+		wprintf(L"There are %d days until Christmas\n", days2xmas);
+	}
 	getchar();
 	return 0;
-}
-
-long long int WindowsTicksToUnixSeconds(long long windowsTicks) {
-
-	return (windowsTicks / WINDOWS_TICKS_PER_SEC - EPOCH_DIFFERENCE);
 }
 
