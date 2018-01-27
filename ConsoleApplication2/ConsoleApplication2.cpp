@@ -3,50 +3,51 @@
 
 #include "stdafx.h"
 #include <windows.h>
+#include <stdbool.h>
 #include <wchar.h>
+
+bool isLeapYear(int);
 
 int wmain(void) {
 
-	PDWORD cChars = NULL;
-	HANDLE std = GetStdHandle(STD_OUTPUT_HANDLE);
+	// Assume year >= 1582 in the Gregorian calendar.
+	int years[] = { 2000, 2002, 2004, 2008, 2012, 2016, 2020,
+		1900, 1800, 1600 };
 
-	if (std == INVALID_HANDLE_VALUE) {
-		wprintf(L"Cannot retrieve standard output handle %d\n",
-			GetLastError());
-		return 1;
+	int size = sizeof(years) / sizeof(int);
+
+	for (int i = 0; i<size; i++) {
+
+		if (isLeapYear(years[i])) {
+
+			wprintf(L"%ld is a leap year\n", years[i]);
+		}
+		else {
+
+			wprintf(L"%ld is not a leap year\n", years[i]);
+		}
 	}
-
-	SYSTEMTIME lt = { 0 };
-	GetLocalTime(&lt);
-
-	wchar_t buf[128] = { 0 };
-
-	int r = GetDateFormatEx(LOCALE_NAME_USER_DEFAULT, DATE_LONGDATE,
-		&lt, NULL, buf, sizeof(buf) / sizeof(buf[0]), NULL);
-
-	if (r == 0) {
-
-		wprintf(L"GetDateFormatEx function failed %d\n",
-			GetLastError());
-
-		CloseHandle(std);
-
-		return 1;
-	}
-
-	WriteConsoleW(std, buf, wcslen(buf), cChars, NULL);
-
-	r = CloseHandle(std);
-
-	if (r == 0) {
-
-		wprintf(L"Cannot close console handle %d\n",
-			GetLastError());
-		return 1;
-	}
-
-	CloseHandle(std);
 	getchar();
 	return 0;
+}
+
+bool isLeapYear(int year) {
+
+	if (year % 4 != 0) {
+
+		return false;
+	}
+	else if (year % 400 == 0) {
+
+		return true;
+	}
+	else if (year % 100 == 0) {
+
+		return false;
+	}
+	else {
+
+		return true;
+	}
 }
 
