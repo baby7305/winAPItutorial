@@ -4,39 +4,25 @@
 #include "stdafx.h"
 #include <windows.h>
 #include <wchar.h>
-#include <stdbool.h>
 #include "Shlwapi.h"
 
 #pragma comment(lib, "Shlwapi.lib")
 
 int wmain(void) {
 
-	wchar_t str1[] = L"512";
-	wchar_t str2[] = L"0xAB12";
-	int n = 0;
+	wchar_t buf[] = L"Today is a rainy day.";
+	wchar_t *search_word = L"rainy";
+	int len = wcslen(search_word);
 
-	bool r = StrToIntExW(str1, STIF_DEFAULT, &n);
+	LPWSTR pr = StrStrW(buf, search_word);
 
-	if (r == true) {
+	if (pr == NULL) {
 
-		wprintf(L"The value is %d\n", n);
+		wprintf(L"No match\n", buf);
 	}
 	else {
 
-		wprintf(L"The first conversion failed\n");
-		return 1;
-	}
-
-	r = StrToIntExW(str2, STIF_SUPPORT_HEX, &n);
-
-	if (r == true) {
-
-		wprintf(L"The value is %d\n", n);
-	}
-	else {
-
-		wprintf(L"The second conversion failed\n");
-		return 1;
+		wprintf(L"%.*ls is found\n", len, pr);
 	}
 	getchar();
 	return 0;
