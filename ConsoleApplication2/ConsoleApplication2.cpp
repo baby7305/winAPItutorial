@@ -3,51 +3,58 @@
 
 #include "stdafx.h"
 #include <windows.h>
-#include <stdbool.h>
 #include <wchar.h>
-
-bool isLeapYear(int);
 
 int wmain(void) {
 
-	// Assume year >= 1582 in the Gregorian calendar.
-	int years[] = { 2000, 2002, 2004, 2008, 2012, 2016, 2020,
-		1900, 1800, 1600 };
+	DWORD tc = GetTickCount();
 
-	int size = sizeof(years) / sizeof(int);
+	short seconds = tc / 1000 % 60;
+	short minutes = tc / 1000 / 60 % 60;
+	short hours = tc / 1000 / 60 / 60 % 24;
+	short days = tc / 1000 / 60 / 60 / 24 % 7;
+	short weeks = tc / 1000 / 60 / 60 / 24 / 7 % 52;
 
-	for (int i = 0; i<size; i++) {
+	wprintf(L"Computer has been running for: ");
 
-		if (isLeapYear(years[i])) {
+	if (weeks > 0 && weeks != 1) {
 
-			wprintf(L"%ld is a leap year\n", years[i]);
-		}
-		else {
-
-			wprintf(L"%ld is not a leap year\n", years[i]);
-		}
+		wprintf(L"%hi weeks ", weeks);
 	}
+	else if (weeks == 1) {
+
+		wprintf(L"1 week ");
+	}
+
+	if (days > 0 && days != 1) {
+
+		wprintf(L"%hi days ", days);
+	}
+	else if (days == 1) {
+
+		wprintf(L"1 day ");
+	}
+
+	if (hours > 0 && hours != 1) {
+
+		wprintf(L"%hi hours ", hours);
+	}
+	else if (hours == 1) {
+
+		wprintf(L"1 hour ");
+	}
+
+	if (minutes > 0 && minutes != 1) {
+
+		wprintf(L"%hi minutes ", minutes);
+	}
+	else if (minutes == 1) {
+
+		wprintf(L"1 minute ");
+	}
+
+	wprintf(L"and %hi seconds\n", seconds);
 	getchar();
 	return 0;
-}
-
-bool isLeapYear(int year) {
-
-	if (year % 4 != 0) {
-
-		return false;
-	}
-	else if (year % 400 == 0) {
-
-		return true;
-	}
-	else if (year % 100 == 0) {
-
-		return false;
-	}
-	else {
-
-		return true;
-	}
 }
 
