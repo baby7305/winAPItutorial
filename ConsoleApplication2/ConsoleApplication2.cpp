@@ -2,26 +2,27 @@
 //
 #include "stdafx.h"
 #include <windows.h>
-#include <stdbool.h>
+
+#define ID_EDIT 1
+#define ID_BUTTON 2
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	PWSTR lpCmdLine, int nCmdShow) {
 
 	MSG  msg;
 	WNDCLASSW wc = { 0 };
-	wc.lpszClassName = L"Check Box";
+	wc.lpszClassName = L"Edit control";
 	wc.hInstance = hInstance;
 	wc.hbrBackground = GetSysColorBrush(COLOR_3DFACE);
 	wc.lpfnWndProc = WndProc;
 	wc.hCursor = LoadCursor(0, IDC_ARROW);
 
 	RegisterClassW(&wc);
-	CreateWindowW(wc.lpszClassName, L"Check Box",
+	CreateWindowW(wc.lpszClassName, L"Edit control",
 		WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-		150, 150, 230, 150, 0, 0, hInstance, 0);
+		220, 220, 280, 200, 0, 0, hInstance, 0);
 
 	while (GetMessage(&msg, NULL, 0, 0)) {
 
@@ -35,40 +36,39 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
 	WPARAM wParam, LPARAM lParam) {
 
-	bool checked = true;
+	static HWND hwndEdit;
+	HWND hwndButton;
 
 	switch (msg) {
 
 	case WM_CREATE:
 
-		CreateWindowW(L"button", L"Show Title",
-			WS_VISIBLE | WS_CHILD | BS_CHECKBOX,
-			20, 20, 185, 35, hwnd, (HMENU)1,
+		hwndEdit = CreateWindowW(L"Edit", NULL,
+			WS_CHILD | WS_VISIBLE | WS_BORDER,
+			50, 50, 150, 20, hwnd, (HMENU)ID_EDIT,
 			NULL, NULL);
 
-		CheckDlgButton(hwnd, 1, BST_CHECKED);
+		hwndButton = CreateWindowW(L"button", L"Set title",
+			WS_VISIBLE | WS_CHILD, 50, 100, 80, 25,
+			hwnd, (HMENU)ID_BUTTON, NULL, NULL);
+
 		break;
 
 	case WM_COMMAND:
 
-		checked = IsDlgButtonChecked(hwnd, 1);
+		if (HIWORD(wParam) == BN_CLICKED) {
 
-		if (checked) {
+			int len = GetWindowTextLengthW(hwndEdit) + 1;
+			//wchar_t text[len];
+			wchar_t text[100];
 
-			CheckDlgButton(hwnd, 1, BST_UNCHECKED);
-			SetWindowTextW(hwnd, L"");
-
-		}
-		else {
-
-			CheckDlgButton(hwnd, 1, BST_CHECKED);
-			SetWindowTextW(hwnd, L"Check Box");
+			GetWindowTextW(hwndEdit, text, len);
+			SetWindowTextW(hwnd, text);
 		}
 
 		break;
 
 	case WM_DESTROY:
-
 		PostQuitMessage(0);
 		break;
 	}
