@@ -11,23 +11,33 @@
 
 int wmain(void) {
 
-	wchar_t buf[] = L"23tennis74";
-	wchar_t trim[] = L"0123456789";
+	wchar_t str1[] = L"512";
+	wchar_t str2[] = L"0xAB12";
+	int n = 0;
 
-	wprintf(L"Original string: %ls\n", buf);
-
-	bool r = StrTrimW(buf, trim);
+	bool r = StrToIntExW(str1, STIF_DEFAULT, &n);
 
 	if (r == true) {
 
-		wprintf(L"The StrTrim() trimmed some characters\n", buf);
+		wprintf(L"The value is %d\n", n);
 	}
 	else {
 
-		wprintf(L"No characters were trimmed\n", buf);
+		wprintf(L"The first conversion failed\n");
+		return 1;
 	}
 
-	wprintf(L"Trimmed string: %ls\n", buf);
+	r = StrToIntExW(str2, STIF_SUPPORT_HEX, &n);
+
+	if (r == true) {
+
+		wprintf(L"The value is %d\n", n);
+	}
+	else {
+
+		wprintf(L"The second conversion failed\n");
+		return 1;
+	}
 	getchar();
 	return 0;
 }
