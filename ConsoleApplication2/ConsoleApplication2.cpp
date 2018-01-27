@@ -4,24 +4,21 @@
 #include <windows.h>
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-LRESULT CALLBACK PanelProc(HWND, UINT, WPARAM, LPARAM);
-
-void RegisterRedPanelClass(void);
-void RegisterBluePanelClass(void);
 
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-	PWSTR lpCmdLine, int nCmdShow) {
+	PWSTR pCmdLine, int CmdShow) {
+
 	MSG  msg;
 	WNDCLASSW wc = { 0 };
-	wc.lpszClassName = L"Windows";
+	wc.lpszClassName = L"Escape";
 	wc.hInstance = hInstance;
 	wc.hbrBackground = GetSysColorBrush(COLOR_3DFACE);
 	wc.lpfnWndProc = WndProc;
 	wc.hCursor = LoadCursor(0, IDC_ARROW);
 
 	RegisterClassW(&wc);
-	CreateWindowW(wc.lpszClassName, L"Windows",
+	CreateWindowW(wc.lpszClassName, L"Escape",
 		WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 		100, 100, 250, 180, 0, 0, hInstance, 0);
 
@@ -39,70 +36,27 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
 
 	switch (msg) {
 
-	case WM_CREATE:
+	case WM_KEYDOWN:
 
-		RegisterRedPanelClass();
+		if (wParam == VK_ESCAPE) {
 
-		CreateWindowW(L"RedPanelClass", NULL,
-			WS_CHILD | WS_VISIBLE,
-			20, 20, 80, 80,
-			hwnd, (HMENU)1, NULL, NULL);
+			int ret = MessageBoxW(hwnd, L"Are you sure to quit?",
+				L"Message", MB_OKCANCEL);
 
-		RegisterBluePanelClass();
+			if (ret == IDOK) {
 
-		CreateWindowW(L"BluePanelClass", NULL,
-			WS_CHILD | WS_VISIBLE,
-			120, 20, 80, 80,
-			hwnd, (HMENU)2, NULL, NULL);
+				SendMessage(hwnd, WM_CLOSE, 0, 0);
+			}
+		}
+
 		break;
 
 	case WM_DESTROY:
 
 		PostQuitMessage(0);
-		return 0;
-	}
-
-	return DefWindowProcW(hwnd, msg, wParam, lParam);
-}
-
-LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg,
-	WPARAM wParam, LPARAM lParam) {
-
-	switch (msg) {
-
-	case WM_LBUTTONUP:
-
-		MessageBeep(MB_OK);
 		break;
 	}
 
 	return DefWindowProcW(hwnd, msg, wParam, lParam);
-}
-
-void RegisterRedPanelClass(void) {
-
-	HBRUSH hbrush = CreateSolidBrush(RGB(255, 0, 0));
-
-	WNDCLASSW rwc = { 0 };
-
-	rwc.lpszClassName = L"RedPanelClass";
-	rwc.hbrBackground = hbrush;
-	rwc.lpfnWndProc = PanelProc;
-	rwc.hCursor = LoadCursor(0, IDC_ARROW);
-	RegisterClassW(&rwc);
-}
-
-void RegisterBluePanelClass(void) {
-
-	HBRUSH hbrush = CreateSolidBrush(RGB(0, 0, 255));
-
-	WNDCLASSW rwc = { 0 };
-
-	rwc.lpszClassName = L"BluePanelClass";
-	rwc.hbrBackground = hbrush;
-	rwc.lpfnWndProc = PanelProc;
-	rwc.hCursor = LoadCursor(0, IDC_ARROW);
-
-	RegisterClassW(&rwc);
 }
 
