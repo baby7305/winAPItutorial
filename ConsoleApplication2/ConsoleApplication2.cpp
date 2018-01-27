@@ -5,6 +5,11 @@
 #include <windows.h>
 #include <wchar.h>
 
+#define WINDOWS_TICKS_PER_SEC 10000000
+#define EPOCH_DIFFERENCE 11644473600LL
+
+long long WindowsTicksToUnixSeconds(long long);
+
 int wmain(void) {
 
 	FILETIME ft = { 0 };
@@ -18,9 +23,17 @@ int wmain(void) {
 
 	long long int hns = li.QuadPart;
 
-	wprintf(L"%lli hundreds of nanoseconds have elapsed "
-		"since Windows API epoch\n", hns);
+	wprintf(L"Windows API time: %lli\n", hns);
+
+	long long int utm = WindowsTicksToUnixSeconds(hns);
+
+	wprintf(L"Unix time: %lli\n", utm);
 	getchar();
 	return 0;
+}
+
+long long int WindowsTicksToUnixSeconds(long long windowsTicks) {
+
+	return (windowsTicks / WINDOWS_TICKS_PER_SEC - EPOCH_DIFFERENCE);
 }
 
