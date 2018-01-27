@@ -6,36 +6,21 @@
 #include <strsafe.h>
 #include <wchar.h>
 
+#define BUF_LEN 8191
+
 int wmain(void) {
 
-	wchar_t str[] = L"ZetCode";
-	size_t target_size = 0;
-
-	size_t size = sizeof(str);
-
-	HRESULT r = StringCbLengthW(str, size, &target_size);
+	wchar_t buf[BUF_LEN] = { 0 };
+	HRESULT r = StringCchGetsW(buf, ARRAYSIZE(buf));
 
 	if (SUCCEEDED(r)) {
 
-		wprintf(L"The string has %lld bytes\n", target_size);
+		wprintf(L"You have entered: %ls\n", buf);
+
 	}
 	else {
 
-		wprintf(L"StringCbLengthW() failed\n");
-		return 1;
-	}
-
-	size = sizeof(str) / sizeof(wchar_t);
-
-	r = StringCchLengthW(str, size, &target_size);
-
-	if (SUCCEEDED(r)) {
-
-		wprintf(L"The string has %lld characters\n", target_size);
-	}
-	else {
-
-		wprintf(L"StringCchLengthW() failed\n");
+		wprintf(L"StringCchGets() failed\n");
 		return 1;
 	}
 	getchar();
