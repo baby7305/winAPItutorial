@@ -5,22 +5,15 @@
 #include <windows.h>
 #include <wchar.h>
 
-int wmain(int argc, wchar_t **argv) {
+int wmain(void) {
 
-	PDWORD cChars = NULL;
-	HANDLE std = GetStdHandle(STD_OUTPUT_HANDLE);
+	SYSTEMTIME lt = { 0 };
 
-	if (std == INVALID_HANDLE_VALUE) {
-		wprintf(L"Cannot retrieve standard output handle\n (%d)",
-			GetLastError());
-	}
+	GetLocalTime(&lt);
 
-	if (argv[1]) {
-
-		WriteConsoleW(std, argv[1], wcslen(argv[1]), cChars, NULL);
-	}	
-
-	CloseHandle(std);
+	wprintf(L"The local time is: %02d:%02d:%02d\n",
+		lt.wHour, lt.wMinute, lt.wSecond);
+	getchar();
 	return 0;
 }
 
