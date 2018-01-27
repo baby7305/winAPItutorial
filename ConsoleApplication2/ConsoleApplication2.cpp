@@ -4,46 +4,29 @@
 #include "stdafx.h"
 #include <windows.h>
 #include <wchar.h>
+#include <VersionHelpers.h>
 
-#define BUFSIZE MAX_PATH
+int wmain(void) {
 
-int wmain(int argc, wchar_t **argv) {
+	//if (IsWindows10OrGreater()) {
 
-	wchar_t buf[BUFSIZE];
-
-	if (argc != 2) {
-
-		wprintf(L"Usage: %ls <dir>\n", argv[0]);
-		getchar();
-		return 1;
+	//    wprintf(L"This is Windows 10+");
+	// }
+	if (IsWindows8Point1OrGreater()) {
+		wprintf(L"This is Windows 8.1+\n");
 	}
-
-	DWORD r = SetCurrentDirectoryW(argv[1]);
-
-	if (r == 0) {
-
-		wprintf(L"SetCurrentDirectoryW() failed (%ld)\n", GetLastError());
-		getchar();
-		return 1;
+	else if (IsWindows8OrGreater()) {
+		wprintf(L"This is Windows 8\n");
 	}
-
-	r = GetCurrentDirectoryW(BUFSIZE, buf);
-
-	if (r == 0) {
-
-		wprintf(L"GetCurrentDirectoryW() failed (%ld)\n", GetLastError());
-		getchar();
-		return 1;
+	else if (IsWindows7OrGreater()) {
+		wprintf(L"This is Windows 7\n");
 	}
-
-	if (r > BUFSIZE) {
-
-		wprintf(L"Buffer too small; needs %d characters\n", r);
-		getchar();
-		return 1;
+	else if (IsWindowsVistaOrGreater()) {
+		wprintf(L"This is Windows Vista\n");
 	}
-
-	wprintf(L"Current directory is: %ls\n", buf);
+	else if (IsWindowsXPOrGreater()) {
+		wprintf(L"This is Windows XP\n");
+	}
 	getchar();
 	return 0;
 }
