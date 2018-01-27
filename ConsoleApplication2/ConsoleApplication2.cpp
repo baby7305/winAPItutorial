@@ -12,16 +12,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	WNDCLASSW wc = { 0 };
 
 	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpszClassName = L"BezierCurve";
+	wc.lpszClassName = L"Shapes";
 	wc.hInstance = hInstance;
 	wc.hbrBackground = GetSysColorBrush(COLOR_3DFACE);
 	wc.lpfnWndProc = WndProc;
 	wc.hCursor = LoadCursor(0, IDC_ARROW);
 
 	RegisterClassW(&wc);
-	CreateWindowW(wc.lpszClassName, L"Bezi¨¦r curve",
+	CreateWindowW(wc.lpszClassName, L"Shapes",
 		WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-		100, 100, 500, 200, NULL, NULL, hInstance, NULL);
+		100, 100, 390, 230, NULL, NULL, hInstance, NULL);
 
 	while (GetMessage(&msg, NULL, 0, 0)) {
 
@@ -37,8 +37,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
 
 	HDC hdc;
 	PAINTSTRUCT ps;
-
-	POINT points[4] = { 20, 40, 320, 200, 330, 110, 450, 40 };
+	const POINT polygon[10] = { 30, 145, 85, 165, 105,
+		110, 65, 125, 30, 105 };
 
 	switch (msg) {
 
@@ -46,7 +46,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
 
 		hdc = BeginPaint(hwnd, &ps);
 
-		PolyBezier(hdc, points, 4);
+		Ellipse(hdc, 30, 30, 120, 90);
+		RoundRect(hdc, 150, 30, 240, 90, 15, 20);
+		Chord(hdc, 270, 30, 360, 90, 270, 45, 360, 45);
+		Polygon(hdc, polygon, 5);
+		Rectangle(hdc, 150, 110, 230, 160);
 
 		EndPaint(hwnd, &ps);
 		break;
