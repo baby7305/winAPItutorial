@@ -7,22 +7,24 @@
 
 int wmain(void) {
 
-	MEMORYSTATUSEX mem = { 0 };
-
-	mem.dwLength = sizeof(mem);
-
-	int r = GlobalMemoryStatusEx(&mem);
+	wchar_t LogicalDrives[MAX_PATH] = { 0 };
+	DWORD r = GetLogicalDriveStringsW(MAX_PATH, LogicalDrives);
 
 	if (r == 0) {
-		wprintf(L"Failed to memory status %ld", GetLastError());
+		wprintf(L"Failed to get drive names %ld", GetLastError());
 		return 1;
 	}
 
-	wprintf(L"Memory in use: %ld percent\n", mem.dwMemoryLoad);
-	wprintf(L"Total physical memory: %lld\n", mem.ullTotalPhys);
-	wprintf(L"Free physical memory: %lld\n", mem.ullAvailPhys);
-	wprintf(L"Total virtual memory: %lld\n", mem.ullTotalVirtual);
-	wprintf(L"Free virtual memory: %lld\n", mem.ullAvailVirtual);
+	if (r > 0 && r <= MAX_PATH) {
+
+		wchar_t *SingleDrive = LogicalDrives;
+
+		while (*SingleDrive) {
+			wprintf(L"%ls\n", SingleDrive);
+
+			SingleDrive += wcslen(SingleDrive) + 1;
+		}
+	}
 	getchar();
 	return 0;
 }
