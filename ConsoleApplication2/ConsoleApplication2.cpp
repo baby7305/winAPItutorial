@@ -7,18 +7,30 @@
 
 int wmain(void) {
 
+	SYSTEMTIME lt = { 0 };
+	GetLocalTime(&lt);
+
 	TIME_ZONE_INFORMATION tzi = { 0 };
+	GetTimeZoneInformation(&tzi);
 
-	int r = GetTimeZoneInformation(&tzi);
+	SYSTEMTIME utm = { 0 };
 
-	if (r == TIME_ZONE_ID_INVALID) {
+	int r = TzSpecificLocalTimeToSystemTime(&tzi, &lt, &utm);
 
-		wprintf(L"Failed to get time zone %d", GetLastError());
+	if (r == 0) {
+
+		wprintf(L"Failed to convert local time to system time %d\n)",
+			GetLastError());
 		return 1;
 	}
 
-	wprintf(L"Time zone: %ls\n", tzi.StandardName);
-	wprintf(L"The bias is: %ld minutes\n", tzi.Bias);
+	wprintf(L"Date: %d/%d/%d\n", lt.wMonth, lt.wDay, lt.wYear);
+
+	wprintf(L"The local time is: %02d:%02d:%02d\n",
+		lt.wHour, lt.wMinute, lt.wSecond);
+
+	wprintf(L"The universal time is: %02d:%02d:%02d\n",
+		utm.wHour, utm.wMinute, utm.wSecond);
 	getchar();
 	return 0;
 }
