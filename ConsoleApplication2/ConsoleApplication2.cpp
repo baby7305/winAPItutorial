@@ -7,24 +7,22 @@
 
 int wmain(void) {
 
-	wchar_t LogicalDrives[MAX_PATH] = { 0 };
-	DWORD r = GetLogicalDriveStringsW(MAX_PATH, LogicalDrives);
+	unsigned __int64 freeCall,
+		total,
+		free;
+
+	int r = GetDiskFreeSpaceExW(L"C:\\", (PULARGE_INTEGER)&freeCall,
+		(PULARGE_INTEGER)&total, (PULARGE_INTEGER)&free);
 
 	if (r == 0) {
-		wprintf(L"Failed to get drive names %ld", GetLastError());
+
+		wprintf(L"Failed to get free disk space %ld", GetLastError());
 		return 1;
 	}
 
-	if (r > 0 && r <= MAX_PATH) {
-
-		wchar_t *SingleDrive = LogicalDrives;
-
-		while (*SingleDrive) {
-			wprintf(L"%ls\n", SingleDrive);
-
-			SingleDrive += wcslen(SingleDrive) + 1;
-		}
-	}
+	wprintf(L"Available space to caller: %I64u MB\n", freeCall / (1024 * 1024));
+	wprintf(L"Total space: %I64u MB\n", total / (1024 * 1024));
+	wprintf(L"Free space on drive: %I64u MB\n", free / (1024 * 1024));
 	getchar();
 	return 0;
 }
