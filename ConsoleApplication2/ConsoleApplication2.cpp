@@ -6,12 +6,10 @@
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 void AddMenus(HWND);
 
-#define IDM_MODE_MAP 1
-#define IDM_MODE_SAT 2
-#define IDM_MODE_TRA 3
-#define IDM_MODE_STR 4
+#define IDM_FILE_NEW 1
+#define IDM_FILE_IMPORT 2
 
-HMENU hMenu;
+#define IDM_IMPORT_MAIL 11
 
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
@@ -19,14 +17,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	MSG  msg;
 	WNDCLASSW wc = { 0 };
-	wc.lpszClassName = L"Radio menu item";
+	wc.lpszClassName = L"Submenu";
 	wc.hInstance = hInstance;
 	wc.hbrBackground = GetSysColorBrush(COLOR_3DFACE);
 	wc.lpfnWndProc = WndProc;
 	wc.hCursor = LoadCursor(0, IDC_ARROW);
 
 	RegisterClassW(&wc);
-	CreateWindowW(wc.lpszClassName, L"Radio menu item",
+	CreateWindowW(wc.lpszClassName, L"Submenu",
 		WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 		100, 100, 350, 250, 0, 0, hInstance, 0);
 
@@ -53,30 +51,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
 
 		switch (LOWORD(wParam)) {
 
-		case IDM_MODE_MAP:
-			CheckMenuRadioItem(hMenu, IDM_MODE_MAP, IDM_MODE_STR,
-				IDM_MODE_MAP, MF_BYCOMMAND);
-			MessageBeep(MB_ICONERROR);
+		case IDM_FILE_NEW:
+			MessageBoxW(NULL, L"New file selected",
+				L"Information", MB_OK);
 			break;
 
-		case IDM_MODE_SAT:
-			CheckMenuRadioItem(hMenu, IDM_MODE_MAP, IDM_MODE_STR,
-				IDM_MODE_SAT, MF_BYCOMMAND);
-			MessageBeep(0xFFFFFFFF);
-			break;
-
-		case IDM_MODE_TRA:
-			CheckMenuRadioItem(hMenu, IDM_MODE_MAP, IDM_MODE_STR,
-				IDM_MODE_TRA, MF_BYCOMMAND);
-			MessageBeep(MB_ICONWARNING);
-			break;
-
-		case IDM_MODE_STR:
-			CheckMenuRadioItem(hMenu, IDM_MODE_MAP, IDM_MODE_STR,
-				IDM_MODE_STR, MF_BYCOMMAND);
-
-			MessageBeep(MB_ICONINFORMATION);
-			break;
+		case IDM_IMPORT_MAIL:
+			MessageBoxW(NULL, L"Import mail selected",
+				L"Information", MB_OK);
 		}
 
 		break;
@@ -92,20 +74,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
 
 void AddMenus(HWND hwnd) {
 
-	HMENU hMenubar;
+	HMENU hMenubar = CreateMenu();
+	HMENU hMenu = CreateMenu();
+	HMENU hSubMenu = CreatePopupMenu();
 
-	hMenubar = CreateMenu();
-	hMenu = CreateMenu();
+	AppendMenuW(hMenu, MF_STRING, IDM_FILE_NEW, L"&New");
 
-	AppendMenuW(hMenu, MF_STRING, IDM_MODE_MAP, L"&Map");
-	AppendMenuW(hMenu, MF_STRING, IDM_MODE_SAT, L"&Satellite");
-	AppendMenuW(hMenu, MF_STRING, IDM_MODE_TRA, L"&Traffic");
-	AppendMenuW(hMenu, MF_STRING, IDM_MODE_STR, L"Street &view");
+	AppendMenuW(hMenu, MF_STRING | MF_POPUP, (UINT_PTR)hSubMenu, L"&Import");
+	AppendMenuW(hSubMenu, MF_STRING, IDM_IMPORT_MAIL, L"Import &mail");
 
-	CheckMenuRadioItem(hMenu, IDM_MODE_MAP, IDM_MODE_STR,
-		IDM_MODE_MAP, MF_BYCOMMAND);
-
-	AppendMenuW(hMenubar, MF_POPUP, (UINT_PTR)hMenu, L"&Map mode");
+	AppendMenuW(hMenubar, MF_POPUP, (UINT_PTR)hMenu, L"&File");
 	SetMenu(hwnd, hMenubar);
 }
 
