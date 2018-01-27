@@ -10,25 +10,24 @@
 
 int wmain(void) {
 
+	wchar_t *word = L"table";
+	int count = 6;
+
 	wchar_t buf[BUF_LEN] = { 0 };
+	wchar_t *line = L"There are %d %lss";
 
-	HRESULT r = StringCchCatW(buf, BUF_LEN, L"Hello ");
+	HRESULT r = StringCchPrintfW(buf, ARRAYSIZE(buf), line, count, word);
 
-	if (FAILED(r)) {
+	if (SUCCEEDED(r)) {
 
-		wprintf(L"StringCchCatW() failed\n");
+		wprintf(L"%ls\n", buf);
+
+	}
+	else {
+
+		wprintf(L"StringCchPrintfW() failed\n");
 		return 1;
 	}
-
-	r = StringCchCatW(buf, BUF_LEN, L"there");
-
-	if (FAILED(r)) {
-
-		wprintf(L"StringCchCatW() failed\n");
-		return 1;
-	}
-
-	wprintf(L"%ls\n", buf);
 	getchar();
 	return 0;
 }
