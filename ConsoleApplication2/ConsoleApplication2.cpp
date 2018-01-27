@@ -5,17 +5,32 @@
 #include <windows.h>
 #include <wchar.h>
 
-#pragma comment(lib, "User32.lib")
+#define STR_EQUAL 0
 
 int wmain(void) {
 
-	wchar_t str[] = L"Europa";
+	wchar_t *s1 = L"Strong";
+	wchar_t *s2 = L"strong";
 
-	CharLowerW(str);
-	wprintf(L"%ls\n", str);
+	if (lstrcmpW(s1, s2) == STR_EQUAL) {
 
-	CharUpperW(str);
-	wprintf(L"%ls\n", str);
+		wprintf(L"%ls and %ls are equal\n", s1, s2);
+	}
+	else {
+
+		wprintf(L"%ls and %ls are not equal\n", s1, s2);
+	}
+
+	wprintf(L"When applying case insensitive comparison:\n");
+
+	if (lstrcmpiW(s1, s2) == STR_EQUAL) {
+
+		wprintf(L"%ls and %ls are equal\n", s1, s2);
+	}
+	else {
+
+		wprintf(L"%ls and %ls are not equal\n", s1, s2);
+	}
 	getchar();
 	return 0;
 }
