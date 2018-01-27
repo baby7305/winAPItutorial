@@ -6,23 +6,29 @@
 #include <strsafe.h>
 #include <wchar.h>
 
-#define BUF_LEN 8191
+#define BUF_LEN 256
 
 int wmain(void) {
 
 	wchar_t buf[BUF_LEN] = { 0 };
-	HRESULT r = StringCchGetsW(buf, ARRAYSIZE(buf));
 
-	if (SUCCEEDED(r)) {
+	HRESULT r = StringCchCatW(buf, BUF_LEN, L"Hello ");
 
-		wprintf(L"You have entered: %ls\n", buf);
+	if (FAILED(r)) {
 
-	}
-	else {
-
-		wprintf(L"StringCchGets() failed\n");
+		wprintf(L"StringCchCatW() failed\n");
 		return 1;
 	}
+
+	r = StringCchCatW(buf, BUF_LEN, L"there");
+
+	if (FAILED(r)) {
+
+		wprintf(L"StringCchCatW() failed\n");
+		return 1;
+	}
+
+	wprintf(L"%ls\n", buf);
 	getchar();
 	return 0;
 }
