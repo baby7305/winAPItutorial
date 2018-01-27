@@ -6,21 +6,24 @@
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 void CenterWindow(HWND);
 
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-	PWSTR pCmdLine, int nCmdShow) {
+#define ID_HOTKEY 1
 
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+	PWSTR lpCmdLine, int nCmdShow) {
+
+	HWND hwnd;
 	MSG  msg;
 	WNDCLASSW wc = { 0 };
-	wc.lpszClassName = L"Center";
+	wc.lpszClassName = L"Application";
 	wc.hInstance = hInstance;
 	wc.hbrBackground = GetSysColorBrush(COLOR_3DFACE);
 	wc.lpfnWndProc = WndProc;
 	wc.hCursor = LoadCursor(0, IDC_ARROW);
 
 	RegisterClassW(&wc);
-	CreateWindowW(wc.lpszClassName, L"Center",
+	hwnd = CreateWindowW(wc.lpszClassName, L"Hot key",
 		WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-		100, 100, 250, 150, 0, 0, hInstance, 0);
+		100, 100, 270, 170, 0, 0, 0, 0);
 
 	while (GetMessage(&msg, NULL, 0, 0)) {
 
@@ -38,11 +41,21 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
 
 	case WM_CREATE:
 
-		CenterWindow(hwnd);
+		RegisterHotKey(hwnd, ID_HOTKEY, MOD_CONTROL, 0x43);
+		break;
+
+	case WM_HOTKEY:
+
+		if ((wParam) == ID_HOTKEY) {
+
+			CenterWindow(hwnd);
+		}
+
 		break;
 
 	case WM_DESTROY:
 
+		UnregisterHotKey(hwnd, ID_HOTKEY);
 		PostQuitMessage(0);
 		break;
 	}
