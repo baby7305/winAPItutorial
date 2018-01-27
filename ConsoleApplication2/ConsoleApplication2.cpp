@@ -4,24 +4,29 @@
 #include <windows.h>
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+void AddMenus(HWND);
 
-#define IDM_FILE_NEW 1
-#define IDM_FILE_OPEN 2
-#define IDM_FILE_QUIT 3
+#define IDM_MODE_MAP 1
+#define IDM_MODE_SAT 2
+#define IDM_MODE_TRA 3
+#define IDM_MODE_STR 4
+
+HMENU hMenu;
 
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	PWSTR lpCmdLine, int nCmdShow) {
+
 	MSG  msg;
 	WNDCLASSW wc = { 0 };
-	wc.lpszClassName = L"Popup menu";
+	wc.lpszClassName = L"Radio menu item";
 	wc.hInstance = hInstance;
 	wc.hbrBackground = GetSysColorBrush(COLOR_3DFACE);
 	wc.lpfnWndProc = WndProc;
 	wc.hCursor = LoadCursor(0, IDC_ARROW);
 
 	RegisterClassW(&wc);
-	CreateWindowW(wc.lpszClassName, L"Popup menu",
+	CreateWindowW(wc.lpszClassName, L"Radio menu item",
 		WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 		100, 100, 350, 250, 0, 0, hInstance, 0);
 
@@ -37,44 +42,43 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
 	WPARAM wParam, LPARAM lParam) {
 
-	HMENU hMenu;
-	POINT point;
-
 	switch (msg) {
+
+	case WM_CREATE:
+
+		AddMenus(hwnd);
+		break;
 
 	case WM_COMMAND:
 
 		switch (LOWORD(wParam)) {
 
-		case IDM_FILE_NEW:
-		case IDM_FILE_OPEN:
+		case IDM_MODE_MAP:
+			CheckMenuRadioItem(hMenu, IDM_MODE_MAP, IDM_MODE_STR,
+				IDM_MODE_MAP, MF_BYCOMMAND);
+			MessageBeep(MB_ICONERROR);
+			break;
+
+		case IDM_MODE_SAT:
+			CheckMenuRadioItem(hMenu, IDM_MODE_MAP, IDM_MODE_STR,
+				IDM_MODE_SAT, MF_BYCOMMAND);
+			MessageBeep(0xFFFFFFFF);
+			break;
+
+		case IDM_MODE_TRA:
+			CheckMenuRadioItem(hMenu, IDM_MODE_MAP, IDM_MODE_STR,
+				IDM_MODE_TRA, MF_BYCOMMAND);
+			MessageBeep(MB_ICONWARNING);
+			break;
+
+		case IDM_MODE_STR:
+			CheckMenuRadioItem(hMenu, IDM_MODE_MAP, IDM_MODE_STR,
+				IDM_MODE_STR, MF_BYCOMMAND);
 
 			MessageBeep(MB_ICONINFORMATION);
 			break;
-
-		case IDM_FILE_QUIT:
-
-			SendMessage(hwnd, WM_CLOSE, 0, 0);
-			break;
 		}
 
-		break;
-
-	case WM_RBUTTONUP:
-
-		point.x = LOWORD(lParam);
-		point.y = HIWORD(lParam);
-
-		hMenu = CreatePopupMenu();
-		ClientToScreen(hwnd, &point);
-
-		AppendMenuW(hMenu, MF_STRING, IDM_FILE_NEW, L"&New");
-		AppendMenuW(hMenu, MF_STRING, IDM_FILE_OPEN, L"&Open");
-		AppendMenuW(hMenu, MF_SEPARATOR, 0, NULL);
-		AppendMenuW(hMenu, MF_STRING, IDM_FILE_QUIT, L"&Quit");
-
-		TrackPopupMenu(hMenu, TPM_RIGHTBUTTON, point.x, point.y, 0, hwnd, NULL);
-		DestroyMenu(hMenu);
 		break;
 
 	case WM_DESTROY:
@@ -84,5 +88,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
 	}
 
 	return DefWindowProcW(hwnd, msg, wParam, lParam);
+}
+
+void AddMenus(HWND hwnd) {
+
+	HMENU hMenubar;
+
+	hMenubar = CreateMenu();
+	hMenu = CreateMenu();
+
+	AppendMenuW(hMenu, MF_STRING, IDM_MODE_MAP, L"&Map");
+	AppendMenuW(hMenu, MF_STRING, IDM_MODE_SAT, L"&Satellite");
+	AppendMenuW(hMenu, MF_STRING, IDM_MODE_TRA, L"&Traffic");
+	AppendMenuW(hMenu, MF_STRING, IDM_MODE_STR, L"Street &view");
+
+	CheckMenuRadioItem(hMenu, IDM_MODE_MAP, IDM_MODE_STR,
+		IDM_MODE_MAP, MF_BYCOMMAND);
+
+	AppendMenuW(hMenubar, MF_POPUP, (UINT_PTR)hMenu, L"&Map mode");
+	SetMenu(hwnd, hMenubar);
 }
 
