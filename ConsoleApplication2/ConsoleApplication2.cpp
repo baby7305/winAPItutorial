@@ -3,24 +3,48 @@
 
 #include "stdafx.h"
 #include <windows.h>
-#include <Lmcons.h>
 #include <wchar.h>
 
-int wmain(void) {
+#define BUFSIZE MAX_PATH
 
-	wchar_t username[UNLEN + 1];
-	DWORD len = sizeof(username) / sizeof(wchar_t);
+int wmain(int argc, wchar_t **argv) {
 
-	int r = GetUserNameW(username, &len);
+	wchar_t buf[BUFSIZE];
 
-	if (r == 0) {
-		wprintf(L"Failed to get username %ld", GetLastError());
+	if (argc != 2) {
+
+		wprintf(L"Usage: %ls <dir>\n", argv[0]);
+		getchar();
 		return 1;
 	}
 
-	wprintf(L"User name: %ls\n", username);
-	getchar();
+	DWORD r = SetCurrentDirectoryW(argv[1]);
 
+	if (r == 0) {
+
+		wprintf(L"SetCurrentDirectoryW() failed (%ld)\n", GetLastError());
+		getchar();
+		return 1;
+	}
+
+	r = GetCurrentDirectoryW(BUFSIZE, buf);
+
+	if (r == 0) {
+
+		wprintf(L"GetCurrentDirectoryW() failed (%ld)\n", GetLastError());
+		getchar();
+		return 1;
+	}
+
+	if (r > BUFSIZE) {
+
+		wprintf(L"Buffer too small; needs %d characters\n", r);
+		getchar();
+		return 1;
+	}
+
+	wprintf(L"Current directory is: %ls\n", buf);
+	getchar();
 	return 0;
 }
 
