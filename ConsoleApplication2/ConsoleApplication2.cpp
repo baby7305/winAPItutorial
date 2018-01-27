@@ -4,26 +4,26 @@
 #include <windows.h>
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-void CenterWindow(HWND);
+LRESULT CALLBACK PanelProc(HWND, UINT, WPARAM, LPARAM);
 
-#define ID_HOTKEY 1
+void RegisterRedPanelClass(void);
+void RegisterBluePanelClass(void);
+
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	PWSTR lpCmdLine, int nCmdShow) {
-
-	HWND hwnd;
 	MSG  msg;
 	WNDCLASSW wc = { 0 };
-	wc.lpszClassName = L"Application";
+	wc.lpszClassName = L"Windows";
 	wc.hInstance = hInstance;
 	wc.hbrBackground = GetSysColorBrush(COLOR_3DFACE);
 	wc.lpfnWndProc = WndProc;
 	wc.hCursor = LoadCursor(0, IDC_ARROW);
 
 	RegisterClassW(&wc);
-	hwnd = CreateWindowW(wc.lpszClassName, L"Hot key",
+	CreateWindowW(wc.lpszClassName, L"Windows",
 		WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-		100, 100, 270, 170, 0, 0, 0, 0);
+		100, 100, 250, 180, 0, 0, hInstance, 0);
 
 	while (GetMessage(&msg, NULL, 0, 0)) {
 
@@ -41,40 +41,68 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
 
 	case WM_CREATE:
 
-		RegisterHotKey(hwnd, ID_HOTKEY, MOD_CONTROL, 0x43);
-		break;
+		RegisterRedPanelClass();
 
-	case WM_HOTKEY:
+		CreateWindowW(L"RedPanelClass", NULL,
+			WS_CHILD | WS_VISIBLE,
+			20, 20, 80, 80,
+			hwnd, (HMENU)1, NULL, NULL);
 
-		if ((wParam) == ID_HOTKEY) {
+		RegisterBluePanelClass();
 
-			CenterWindow(hwnd);
-		}
-
+		CreateWindowW(L"BluePanelClass", NULL,
+			WS_CHILD | WS_VISIBLE,
+			120, 20, 80, 80,
+			hwnd, (HMENU)2, NULL, NULL);
 		break;
 
 	case WM_DESTROY:
 
-		UnregisterHotKey(hwnd, ID_HOTKEY);
 		PostQuitMessage(0);
+		return 0;
+	}
+
+	return DefWindowProcW(hwnd, msg, wParam, lParam);
+}
+
+LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg,
+	WPARAM wParam, LPARAM lParam) {
+
+	switch (msg) {
+
+	case WM_LBUTTONUP:
+
+		MessageBeep(MB_OK);
 		break;
 	}
 
 	return DefWindowProcW(hwnd, msg, wParam, lParam);
 }
 
-void CenterWindow(HWND hwnd) {
+void RegisterRedPanelClass(void) {
 
-	RECT rc = { 0 };
+	HBRUSH hbrush = CreateSolidBrush(RGB(255, 0, 0));
 
-	GetWindowRect(hwnd, &rc);
-	int win_w = rc.right - rc.left;
-	int win_h = rc.bottom - rc.top;
+	WNDCLASSW rwc = { 0 };
 
-	int screen_w = GetSystemMetrics(SM_CXSCREEN);
-	int screen_h = GetSystemMetrics(SM_CYSCREEN);
+	rwc.lpszClassName = L"RedPanelClass";
+	rwc.hbrBackground = hbrush;
+	rwc.lpfnWndProc = PanelProc;
+	rwc.hCursor = LoadCursor(0, IDC_ARROW);
+	RegisterClassW(&rwc);
+}
 
-	SetWindowPos(hwnd, HWND_TOP, (screen_w - win_w) / 2,
-		(screen_h - win_h) / 2, 0, 0, SWP_NOSIZE);
+void RegisterBluePanelClass(void) {
+
+	HBRUSH hbrush = CreateSolidBrush(RGB(0, 0, 255));
+
+	WNDCLASSW rwc = { 0 };
+
+	rwc.lpszClassName = L"BluePanelClass";
+	rwc.hbrBackground = hbrush;
+	rwc.lpfnWndProc = PanelProc;
+	rwc.hCursor = LoadCursor(0, IDC_ARROW);
+
+	RegisterClassW(&rwc);
 }
 
