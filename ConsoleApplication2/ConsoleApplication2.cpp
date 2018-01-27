@@ -4,29 +4,25 @@
 #include "stdafx.h"
 #include <windows.h>
 #include <wchar.h>
-#include <VersionHelpers.h>
 
 int wmain(void) {
 
-	//if (IsWindows10OrGreater()) {
+	MEMORYSTATUSEX mem = { 0 };
 
-	//    wprintf(L"This is Windows 10+");
-	// }
-	if (IsWindows8Point1OrGreater()) {
-		wprintf(L"This is Windows 8.1+\n");
+	mem.dwLength = sizeof(mem);
+
+	int r = GlobalMemoryStatusEx(&mem);
+
+	if (r == 0) {
+		wprintf(L"Failed to memory status %ld", GetLastError());
+		return 1;
 	}
-	else if (IsWindows8OrGreater()) {
-		wprintf(L"This is Windows 8\n");
-	}
-	else if (IsWindows7OrGreater()) {
-		wprintf(L"This is Windows 7\n");
-	}
-	else if (IsWindowsVistaOrGreater()) {
-		wprintf(L"This is Windows Vista\n");
-	}
-	else if (IsWindowsXPOrGreater()) {
-		wprintf(L"This is Windows XP\n");
-	}
+
+	wprintf(L"Memory in use: %ld percent\n", mem.dwMemoryLoad);
+	wprintf(L"Total physical memory: %lld\n", mem.ullTotalPhys);
+	wprintf(L"Free physical memory: %lld\n", mem.ullAvailPhys);
+	wprintf(L"Total virtual memory: %lld\n", mem.ullTotalVirtual);
+	wprintf(L"Free virtual memory: %lld\n", mem.ullAvailVirtual);
 	getchar();
 	return 0;
 }
