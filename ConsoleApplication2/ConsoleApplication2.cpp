@@ -3,26 +3,40 @@
 
 #include "stdafx.h"
 #include <windows.h>
+#include <strsafe.h>
 #include <wchar.h>
-#include "Shlwapi.h"
-
-#pragma comment(lib, "Shlwapi.lib")
 
 int wmain(void) {
 
-	wchar_t buf[] = L"Today is a rainy day.";
-	wchar_t *search_word = L"rainy";
-	int len = wcslen(search_word);
+	wchar_t str[] = L"ZetCode";
+	size_t target_size = 0;
 
-	LPWSTR pr = StrStrW(buf, search_word);
+	size_t size = sizeof(str);
 
-	if (pr == NULL) {
+	HRESULT r = StringCbLengthW(str, size, &target_size);
 
-		wprintf(L"No match\n", buf);
+	if (SUCCEEDED(r)) {
+
+		wprintf(L"The string has %lld bytes\n", target_size);
 	}
 	else {
 
-		wprintf(L"%.*ls is found\n", len, pr);
+		wprintf(L"StringCbLengthW() failed\n");
+		return 1;
+	}
+
+	size = sizeof(str) / sizeof(wchar_t);
+
+	r = StringCchLengthW(str, size, &target_size);
+
+	if (SUCCEEDED(r)) {
+
+		wprintf(L"The string has %lld characters\n", target_size);
+	}
+	else {
+
+		wprintf(L"StringCchLengthW() failed\n");
+		return 1;
 	}
 	getchar();
 	return 0;
