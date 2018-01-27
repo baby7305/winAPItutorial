@@ -2,10 +2,8 @@
 //
 #include "stdafx.h"
 #include <windows.h>
-#include <time.h>
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-void DrawPixels(HWND hwnd);
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	PWSTR lpCmdLine, int nCmdShow) {
@@ -14,16 +12,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	WNDCLASSW wc = { 0 };
 
 	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpszClassName = L"Pixels";
+	wc.lpszClassName = L"Rectangle";
 	wc.hInstance = hInstance;
 	wc.hbrBackground = GetSysColorBrush(COLOR_3DFACE);
 	wc.lpfnWndProc = WndProc;
 	wc.hCursor = LoadCursor(0, IDC_ARROW);
 
 	RegisterClassW(&wc);
-	CreateWindowW(wc.lpszClassName, L"Pixels",
+	CreateWindowW(wc.lpszClassName, L"Rectangle",
 		WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-		100, 100, 300, 250, NULL, NULL, hInstance, NULL);
+		100, 100, 250, 200, NULL, NULL, hInstance, NULL);
 
 	while (GetMessage(&msg, NULL, 0, 0)) {
 
@@ -31,19 +29,22 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		DispatchMessage(&msg);
 	}
 
-	srand(time(NULL));
-
 	return (int)msg.wParam;
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
 	WPARAM wParam, LPARAM lParam) {
 
+	HDC hdc;
+	PAINTSTRUCT ps;
+
 	switch (msg) {
 
 	case WM_PAINT:
 
-		DrawPixels(hwnd);
+		hdc = BeginPaint(hwnd, &ps);
+		Rectangle(hdc, 50, 50, 200, 100);
+		EndPaint(hwnd, &ps);
 		break;
 
 	case WM_DESTROY:
@@ -53,29 +54,5 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
 	}
 
 	return DefWindowProcW(hwnd, msg, wParam, lParam);
-}
-
-void DrawPixels(HWND hwnd) {
-
-	PAINTSTRUCT ps;
-	RECT r;
-
-	GetClientRect(hwnd, &r);
-
-	if (r.bottom == 0) {
-
-		return;
-	}
-
-	HDC hdc = BeginPaint(hwnd, &ps);
-
-	for (int i = 0; i<1000; i++) {
-
-		int x = rand() % r.right;
-		int y = rand() % r.bottom;
-		SetPixel(hdc, x, y, RGB(255, 0, 0));
-	}
-
-	EndPaint(hwnd, &ps);
 }
 
