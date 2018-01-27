@@ -3,22 +3,24 @@
 
 #include "stdafx.h"
 #include <windows.h>
+#include <Lmcons.h>
 #include <wchar.h>
 
 int wmain(void) {
 
-	wchar_t computerName[MAX_COMPUTERNAME_LENGTH + 1];
-	DWORD size = sizeof(computerName) / sizeof(computerName[0]);
+	wchar_t username[UNLEN + 1];
+	DWORD len = sizeof(username) / sizeof(wchar_t);
 
-	int r = GetComputerNameW(computerName, &size);
+	int r = GetUserNameW(username, &len);
 
 	if (r == 0) {
-		wprintf(L"Failed to get computer name %ld", GetLastError());
+		wprintf(L"Failed to get username %ld", GetLastError());
 		return 1;
 	}
 
-	wprintf(L"Computer name: %ls\n", computerName);
+	wprintf(L"User name: %ls\n", username);
 	getchar();
+
 	return 0;
 }
 
