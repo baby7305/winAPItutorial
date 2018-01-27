@@ -5,13 +5,17 @@
 #include <windows.h>
 #include <wchar.h>
 
+#pragma comment(lib, "User32.lib")
+
 int wmain(void) {
 
-	char *name = "Jane";
-	wchar_t *town = L"Bratislava";
+	wchar_t str[] = L"Europa";
 
-	wprintf(L"The length of the name string is %d\n", lstrlenA(name));
-	wprintf(L"The town string length is %d\n", lstrlenW(town));
+	CharLowerW(str);
+	wprintf(L"%ls\n", str);
+
+	CharUpperW(str);
+	wprintf(L"%ls\n", str);
 	getchar();
 	return 0;
 }
