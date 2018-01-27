@@ -7,22 +7,36 @@
 
 int wmain(void) {
 
-	unsigned __int64 freeCall,
-		total,
-		free;
+	DWORD BufSize = MAX_PATH;
+	DWORD mhz = MAX_PATH;
+	HKEY key;
 
-	int r = GetDiskFreeSpaceExW(L"C:\\", (PULARGE_INTEGER)&freeCall,
-		(PULARGE_INTEGER)&total, (PULARGE_INTEGER)&free);
+	long r = RegOpenKeyExW(HKEY_LOCAL_MACHINE,
+		L"HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0", 0, KEY_READ, &key);
 
-	if (r == 0) {
+	if (r != ERROR_SUCCESS) {
 
-		wprintf(L"Failed to get free disk space %ld", GetLastError());
+		wprintf(L"RegOpenKeyExW() failed %ld", GetLastError());
 		return 1;
 	}
 
-	wprintf(L"Available space to caller: %I64u MB\n", freeCall / (1024 * 1024));
-	wprintf(L"Total space: %I64u MB\n", total / (1024 * 1024));
-	wprintf(L"Free space on drive: %I64u MB\n", free / (1024 * 1024));
+	r = RegQueryValueExW(key, L"~MHz", NULL, NULL, (LPBYTE)&mhz, &BufSize);
+
+	if (r != ERROR_SUCCESS) {
+
+		wprintf(L"RegQueryValueExW() failed %ld", GetLastError());
+		return 1;
+	}
+
+	wprintf(L"CPU speed: %lu MHz\n", mhz);
+
+	r = RegCloseKey(key);
+
+	if (r != ERROR_SUCCESS) {
+
+		wprintf(L"Failed to close registry handle %ld", GetLastError());
+		return 1;
+	}
 	getchar();
 	return 0;
 }
