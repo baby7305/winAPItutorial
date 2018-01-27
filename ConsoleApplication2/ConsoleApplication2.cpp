@@ -12,16 +12,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	WNDCLASSW wc = { 0 };
 
 	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpszClassName = L"Star";
+	wc.lpszClassName = L"Draw Bitmap";
 	wc.hInstance = hInstance;
 	wc.hbrBackground = GetSysColorBrush(COLOR_3DFACE);
 	wc.lpfnWndProc = WndProc;
 	wc.hCursor = LoadCursor(0, IDC_ARROW);
 
 	RegisterClassW(&wc);
-	CreateWindowW(wc.lpszClassName, L"Star",
+	CreateWindowW(wc.lpszClassName, L"Draw Bitmap",
 		WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-		100, 100, 300, 250, NULL, NULL, hInstance, NULL);
+		100, 100, 280, 220, NULL, NULL, hInstance, NULL);
 
 	while (GetMessage(&msg, NULL, 0, 0)) {
 
@@ -35,35 +35,49 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
 	WPARAM wParam, LPARAM lParam) {
 
+	static HBITMAP hBitmap;
 	HDC hdc;
 	PAINTSTRUCT ps;
-
-	POINT points[11] = {
-		{ 10, 85 },
-		{ 85, 75 },
-		{ 110, 10 },
-		{ 135, 75 },
-		{ 210, 85 },
-		{ 160, 125 },
-		{ 170, 190 },
-		{ 110, 150 },
-		{ 50, 190 },
-		{ 60, 125 },
-		{ 10, 85 }
-	};
+	BITMAP bitmap;
+	HDC hdcMem;
+	HGDIOBJ oldBitmap;
 
 	switch (msg) {
+
+	case WM_CREATE:
+
+		hBitmap = (HBITMAP)LoadImageW(NULL, L"F:\\129225.bmp",
+			IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+
+		if (hBitmap == NULL) {
+			MessageBoxW(hwnd, L"Failed to load image", L"Error", MB_OK);
+		}
+
+		break;
 
 	case WM_PAINT:
 
 		hdc = BeginPaint(hwnd, &ps);
-		Polyline(hdc, points, 11);
+
+		hdcMem = CreateCompatibleDC(hdc);
+		oldBitmap = SelectObject(hdcMem, hBitmap);
+
+		GetObject(hBitmap, sizeof(bitmap), &bitmap);
+		BitBlt(hdc, 5, 5, bitmap.bmWidth, bitmap.bmHeight,
+			hdcMem, 0, 0, SRCCOPY);
+
+		SelectObject(hdcMem, oldBitmap);
+		DeleteDC(hdcMem);
+
 		EndPaint(hwnd, &ps);
+
 		break;
 
 	case WM_DESTROY:
 
+		DeleteObject(hBitmap);
 		PostQuitMessage(0);
+
 		return 0;
 	}
 
