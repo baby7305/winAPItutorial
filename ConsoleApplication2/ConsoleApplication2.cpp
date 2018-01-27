@@ -5,32 +5,18 @@
 #include <windows.h>
 #include <wchar.h>
 
-#define STR_EQUAL 0
+#pragma comment(lib, "User32.lib")
 
 int wmain(void) {
 
-	wchar_t *s1 = L"Strong";
-	wchar_t *s2 = L"strong";
+	SYSTEMTIME st = { 0 };
+	wchar_t buf[128] = { 0 };
 
-	if (lstrcmpW(s1, s2) == STR_EQUAL) {
+	GetLocalTime(&st);
+	wsprintfW(buf, L"Today is %lu.%lu.%lu\n", st.wDay,
+		st.wMonth, st.wYear);
 
-		wprintf(L"%ls and %ls are equal\n", s1, s2);
-	}
-	else {
-
-		wprintf(L"%ls and %ls are not equal\n", s1, s2);
-	}
-
-	wprintf(L"When applying case insensitive comparison:\n");
-
-	if (lstrcmpiW(s1, s2) == STR_EQUAL) {
-
-		wprintf(L"%ls and %ls are equal\n", s1, s2);
-	}
-	else {
-
-		wprintf(L"%ls and %ls are not equal\n", s1, s2);
-	}
+	wprintf(buf);
 	getchar();
 	return 0;
 }
