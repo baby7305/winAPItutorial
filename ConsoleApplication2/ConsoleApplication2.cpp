@@ -5,22 +5,14 @@
 #include <windows.h>
 #include <wchar.h>
 
-int wmain(int argc, wchar_t **argv) {
+int wmain(void) {
 
-	PDWORD cChars = NULL;
-	HANDLE std = GetStdHandle(STD_OUTPUT_HANDLE);
+	char *name = "Jane";
+	wchar_t *town = L"Bratislava";
 
-	if (std == INVALID_HANDLE_VALUE) {
-		wprintf(L"Cannot retrieve standard output handle\n (%d)",
-			GetLastError());
-	}
-
-	if (argv[1]) {
-
-		WriteConsoleW(std, argv[1], wcslen(argv[1]), cChars, NULL);
-	}	
-
-	CloseHandle(std);
+	wprintf(L"The length of the name string is %d\n", lstrlenA(name));
+	wprintf(L"The town string length is %d\n", lstrlenW(town));
+	getchar();
 	return 0;
 }
 
