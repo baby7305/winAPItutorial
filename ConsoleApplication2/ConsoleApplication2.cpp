@@ -7,12 +7,12 @@
 
 int wmain(void) {
 
-	SYSTEMTIME lt = { 0 };
+	SYSTEMTIME st = { 0 };
 
-	GetLocalTime(&lt);
+	GetSystemTime(&st);
 
-	wprintf(L"The local time is: %02d:%02d:%02d\n",
-		lt.wHour, lt.wMinute, lt.wSecond);
+	wprintf(L"The UTC time is: %02d:%02d:%02d\n",
+		st.wHour, st.wMinute, st.wSecond);
 	getchar();
 	return 0;
 }
