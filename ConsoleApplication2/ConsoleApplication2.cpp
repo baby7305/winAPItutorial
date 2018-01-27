@@ -9,14 +9,18 @@
 
 int wmain(void) {
 
-	int r = LockWorkStation();
+	wchar_t computerName[MAX_COMPUTERNAME_LENGTH + 1];
+	DWORD size = sizeof(computerName) / sizeof(computerName[0]);
+
+	int r = GetComputerNameW(computerName, &size);
 
 	if (r == 0) {
-
-		wprintf(L"LockWorkStation() failed %d\n", GetLastError());
+		wprintf(L"Failed to get computer name %ld", GetLastError());
 		return 1;
 	}
 
+	wprintf(L"Computer name: %ls\n", computerName);
+	getchar();
 	return 0;
 }
 
