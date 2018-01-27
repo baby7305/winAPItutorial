@@ -12,16 +12,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	WNDCLASSW wc = { 0 };
 
 	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpszClassName = L"Shapes";
+	wc.lpszClassName = L"Star";
 	wc.hInstance = hInstance;
 	wc.hbrBackground = GetSysColorBrush(COLOR_3DFACE);
 	wc.lpfnWndProc = WndProc;
 	wc.hCursor = LoadCursor(0, IDC_ARROW);
 
 	RegisterClassW(&wc);
-	CreateWindowW(wc.lpszClassName, L"Shapes",
+	CreateWindowW(wc.lpszClassName, L"Star",
 		WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-		100, 100, 390, 230, NULL, NULL, hInstance, NULL);
+		100, 100, 300, 250, NULL, NULL, hInstance, NULL);
 
 	while (GetMessage(&msg, NULL, 0, 0)) {
 
@@ -37,21 +37,27 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg,
 
 	HDC hdc;
 	PAINTSTRUCT ps;
-	const POINT polygon[10] = { 30, 145, 85, 165, 105,
-		110, 65, 125, 30, 105 };
+
+	POINT points[11] = {
+		{ 10, 85 },
+		{ 85, 75 },
+		{ 110, 10 },
+		{ 135, 75 },
+		{ 210, 85 },
+		{ 160, 125 },
+		{ 170, 190 },
+		{ 110, 150 },
+		{ 50, 190 },
+		{ 60, 125 },
+		{ 10, 85 }
+	};
 
 	switch (msg) {
 
 	case WM_PAINT:
 
 		hdc = BeginPaint(hwnd, &ps);
-
-		Ellipse(hdc, 30, 30, 120, 90);
-		RoundRect(hdc, 150, 30, 240, 90, 15, 20);
-		Chord(hdc, 270, 30, 360, 90, 270, 45, 360, 45);
-		Polygon(hdc, polygon, 5);
-		Rectangle(hdc, 150, 110, 230, 160);
-
+		Polyline(hdc, points, 11);
 		EndPaint(hwnd, &ps);
 		break;
 
