@@ -4,9 +4,9 @@
 #include <windows.h>
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-	PWSTR szCmdLine, int CmdShow) {
+	PWSTR pCmdLine, int CmdShow) {
 
-	MessageBoxW(NULL, szCmdLine, L"Title", MB_OK);
+	MessageBoxW(NULL, L"First Program", L"First", MB_OK);
 
 	return 0;
 }
