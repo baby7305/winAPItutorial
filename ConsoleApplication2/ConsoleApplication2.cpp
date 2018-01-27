@@ -7,13 +7,19 @@
 
 int wmain(void) {
 
-	SYSTEMTIME st = { 0 };
+	FILETIME ft = { 0 };
 
-	wchar_t *dn[] = { L"Sunday", L"Monday", L"Tuesday",
-		L"Wednesday", L"Thursday", L"Friday", L"Saturday" };
+	GetSystemTimeAsFileTime(&ft);
 
-	GetLocalTime(&st);
-	wprintf(L"Today is %ls\n", dn[st.wDayOfWeek]);
+	LARGE_INTEGER li = { 0 };
+
+	li.LowPart = ft.dwLowDateTime;
+	li.HighPart = ft.dwHighDateTime;
+
+	long long int hns = li.QuadPart;
+
+	wprintf(L"%lli hundreds of nanoseconds have elapsed "
+		"since Windows API epoch\n", hns);
 	getchar();
 	return 0;
 }
